@@ -1,24 +1,35 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+
+// Views 
+import Home from "./Views/Home";
+import Error from "./Views/Error";
+
+// Components 
+import Header from "./Components/Header"
+
+import {
+  Switch,
+  Route
+} from "react-router-dom";
+
+function IncludeHeader(props) {
+
+  return(
+    <div id="Header">
+      <Header/>
+       {props.children}
+    </div>
+  );
+}
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+     
+     <Switch> 
+       <Route exact path="/" component={() => <IncludeHeader children={<Home/>}/> }/>
+       <Route path="*" component={Error}/>
+      </Switch>
     </div>
   );
 }
