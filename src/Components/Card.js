@@ -1,6 +1,13 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import PropTypes from 'prop-types';
 import styled from "styled-components";
+
+// Components
+import Button from "./Buttons";
+
+
+// Context
+import {ListContext} from "../config/store";
 
 const CardWrapper = styled.div`
     padding: 20px 0px;
@@ -9,7 +16,6 @@ const CardWrapper = styled.div`
     text-align:center;
 
     ul{ 
-
         text-align:left;
         padding: 20px 20px;
     }
@@ -20,6 +26,10 @@ const CardWrapper = styled.div`
         font-size:20px;
         font-weight:bolder;
         text-transform:capitalize;
+    }
+
+    button {
+        max-width:280px;
     }
     
 `;
@@ -40,6 +50,12 @@ const CardHeader = styled.div`
         text-transform:uppercase;
         font-weight:bold;
         color:${({ theme }) => theme.colors.secondaryBlue};
+   }
+
+   h3{
+    font-weight:bold;
+    color:${({ theme }) => theme.colors.secondaryBlue};
+    padding-top:5px;
    }
 `;
 
@@ -66,12 +82,45 @@ const ImageContainer = styled.div`
 `;
 
 function Card(props) {
-    const {name, image, speed, spDefence, spAttack, defense, attack, hp, type1, type2 } = props;
+    const {name, image, speed, spDefence, spAttack, defense, attack, hp, type1, type2, height, weight, remove } = props;
+
+    let [myFavourite, setMyFacourite] = useContext(ListContext);
+    const [showButton, setButtonView] = useState(true);
+    const [removeCard, setRemoveCard] = useState(true);
+ 
+    const AddToProfileHandler = () => {
+        // Add the pokemon to localStorage list
+        myFavourite.push(name);
+        // Check if Pokemons are already in the list
+        if(localStorage.getItem("MyFarArray")){
+            const localStorageExistingValues = localStorage.getItem("MyFarArray").split(",");
+            myFavourite.push(localStorageExistingValues);
+        }
+        // Set the list
+        setMyFacourite(myFavourite);
+        setButtonView(false);
+        localStorage.setItem('MyFarArray', myFavourite);
+    };
+
+    const removeFromProfileHandler = () => {
+        const localStorageExistingValues = localStorage.getItem("MyFarArray").split(",");
+        const removeStoreItem = localStorageExistingValues.filter(e => e !== name);
+        localStorage.setItem('MyFarArray', removeStoreItem);
+        setMyFacourite(removeStoreItem);
+        setRemoveCard(false);
+    };
+
     return (
-        < CardWrapper>
+        <React.Fragment> 
+        { removeCard && (
+        <CardWrapper>
             <CardHeader>
                 <h1>{name}</h1>
-                <h2>{hp}</h2>
+                <div>
+                    <h2>{hp}</h2>
+                    <h3>Height:{height * 10}cm</h3>
+                    <h3>Weight:{weight/10}kg</h3>
+                </div>
             </CardHeader>
             <PokemonTypes>
                 <h3>{type1}</h3>
@@ -87,8 +136,11 @@ function Card(props) {
                 <li><h4>{defense}</h4></li>
                 <li><h4>{attack}</h4></li>
             </ul>
-            
-        </ CardWrapper>
+            {showButton && !remove && (<Button text="Add to favourite" onClick={AddToProfileHandler}/> )}
+            {remove && (<Button text="Remove" onClick={removeFromProfileHandler}/> )}
+        </CardWrapper>
+        )}
+        </React.Fragment>
     )
 }
 
@@ -102,7 +154,9 @@ Card.propTypes = {
     attack: PropTypes.array.isRequired,
     hp: PropTypes.array.isRequired,
     type1: PropTypes.string.isRequired,
-    type2: PropTypes.string.isRequired
+    type2: PropTypes.string.isRequired,
+    height:PropTypes.number.isRequired, 
+    weight:PropTypes.number.isRequired
 }
 
 Card.defaultProps = {
@@ -115,8 +169,9 @@ Card.defaultProps = {
     attack: "Attack:40",
     hp: "HP:40",
     type1:"Poison",
-    type2:""
-
+    type2:"",
+    height: 10,
+    weight: 10
   };
 
 export default Card

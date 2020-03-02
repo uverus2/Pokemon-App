@@ -36,8 +36,8 @@ function Header(props) {
             <Logo src={logo} alt=""/>
             <ButtonWrap> 
                 <Link to="/"> <Button text="Home"/> </Link>
-                <Link to="/"> <Button text="Compare"/> </Link>
-                <Link to="/"> <Button text="Favourite"/> </Link>
+                <Link to="/compare"> <Button text="Compare"/> </Link>
+                <Link to="/profile"> <Button text="Favourite"/> </Link>
             </ButtonWrap>
         </HeaderWrap>
     )
