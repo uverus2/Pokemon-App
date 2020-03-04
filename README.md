@@ -13,7 +13,7 @@
 ## Tech Specification
 The technologies used for the project are React JS and CSS 
 
-Dependencies 
+### Dependencies 
     - Create React App
     - Styled Components
     - React Hook Form
@@ -23,9 +23,11 @@ Dependencies
 API used is the PokeAPI
     - https://pokeapi.co/api/v2/pokemon/
 
-Additional information 
+## Additional information 
     - Search suggestions are limited to 200 results
     - Favourite Pokémon’s are stored in Local Storage
+    - The project is mobile responsive however it is only tested using the browser's device sizes
+    - Developed on Opera but tested on Chrome, Edge and Mozilla 
 
 
 To run the project please follow instructions below provided by Create React App
