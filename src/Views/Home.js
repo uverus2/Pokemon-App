@@ -1,12 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import styled from "styled-components";
 import { useForm } from 'react-hook-form';
+
 
 // Components
 import Card from "../Components/Card";
 import Button from "../Components/Buttons";
 
- 
+// Context
+import {ListContext} from "../config/store";
 
 const axios = require('axios');
 
@@ -64,6 +66,18 @@ const LoadButtonWrap = styled.div`
     }
 `;
 
+const ErrorsWrap = styled.div`
+    text-align:center;
+    padding:20px 0px;
+    font-weight:bold;
+    font-size:25px;
+    color:red;
+
+    h2{
+        padding:5px 0px;
+    }
+`;
+
  function Home(props) {
      // Refs
      const { register, handleSubmit, errors } = useForm();
@@ -75,6 +89,7 @@ const LoadButtonWrap = styled.div`
      let [pokemon, setPokemonData] = useState([]);
      let [searchResult, setSearchResult] = useState([]);
      let [errorMessage, setMessageValue] = useState(false);
+     let [myFavourite, setMyFacourite] = useContext(ListContext);
 
      //Let new limit based on action
      const changeLimit = () => {
@@ -116,6 +131,20 @@ const LoadButtonWrap = styled.div`
 
                 // Store Pokemons
                 setPokemonData(resolvedPokemonBrowse);
+
+                // if(localStorage.getItem('MyFarArray')){
+                //     const storedFavPokemons = localStorage.getItem('MyFarArray');
+                //     const uniqueFavArray = [...new Set(storedFavPokemons.split(","))];
+                //     console.log(uniqueFavArray);
+                //     let pokemonBrowse = await uniqueFavArray.map(async i => {
+                //             return await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`).then(res => {
+                //                  const pokemonData = [ res.data.species.name, res.data.sprites.front_default, res.data.types.map(i => i.type.name), res.data.stats.map(i => [i.stat.name + ": ", i.base_stat,]), res.data.height, res.data.weight];
+                //                  return pokemonData;
+                //               });
+                //          });
+                //     const resolvedPokemonBrowse = await Promise.all(pokemonBrowse);
+                //     setMyFacourite(resolvedPokemonBrowse);
+                // }
     
             }catch (e) {
                 console.log(e);
@@ -136,8 +165,8 @@ const LoadButtonWrap = styled.div`
     return (
         <React.Fragment>
             <form onSubmit={handleSubmit(onSubmit)}> 
-            {errorMessage && (<h1>No Results Found</h1>)}
-            {errors.searchPokemon && (<h1> {errors.searchPokemon.message}</h1>)}
+            {errorMessage && (<ErrorsWrap> <h2>No Results Found</h2> </ErrorsWrap>)}
+            {errors.searchPokemon && (<ErrorsWrap> <h1> {errors.searchPokemon.message}</h1> </ErrorsWrap>)}
             <SearchWrap>
                 <SearchInput type="text" name="searchPokemon" ref={register({required: "Please Enter a Pokemon name"})}/>
                 <Button text="Search Pokemon"/>

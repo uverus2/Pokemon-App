@@ -48,22 +48,32 @@ function Profile () {
     let [myFavourite, setMyFacourite] = useContext(ListContext);
     useEffect(() => {
         (async() => {
-            if(localStorage.getItem('MyFarArray')){
-                const storedFavPokemons = localStorage.getItem('MyFarArray');
-                const uniqueFavArray = [...new Set(storedFavPokemons.split(","))];
+            if(myFavourite.length > 0){
                 setEmptyMessage(false);
-                let pokemonBrowse = await uniqueFavArray.map(async i => {
+                const uniqueArray =  [...new Set(myFavourite)]
+                let pokemonBrowse = await uniqueArray.map(async i => {
                         return await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`).then(res => {
                              const pokemonData = [ res.data.species.name, res.data.sprites.front_default, res.data.types.map(i => i.type.name), res.data.stats.map(i => [i.stat.name + ": ", i.base_stat,]), res.data.height, res.data.weight];
                              return pokemonData;
                           });
                      });
                 const resolvedPokemonBrowse = await Promise.all(pokemonBrowse);
+                //setfavPokemon(resolvedPokemonBrowse);
                 setfavPokemon(resolvedPokemonBrowse);
+                // console.log(favPokemon);
             }
         })();
-    },[]);
+    },[myFavourite]);
 
+    // useEffect(()=> {
+    //     console.log(myFavourite)
+    //     if(myFavourite.length > 0){
+    //         setEmptyMessage(false);
+    //     }else if (myFavourite.length < 0){
+    //         setEmptyMessage(true);
+    //     }
+    //     console.log(myFavourite);
+    // },[myFavourite]);
     
 
     let favPokemons;

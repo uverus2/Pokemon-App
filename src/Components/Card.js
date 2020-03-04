@@ -90,23 +90,24 @@ function Card(props) {
  
     const AddToProfileHandler = () => {
         // Add the pokemon to localStorage list
-        myFavourite.push(name);
-        // Check if Pokemons are already in the list
-        if(localStorage.getItem("MyFarArray")){
-            const localStorageExistingValues = localStorage.getItem("MyFarArray").split(",");
-            myFavourite.push(localStorageExistingValues);
-        }
+        myFavourite.push(name)
+        const uniqueArray =  [...new Set(myFavourite)]
+        // const removeStoreItem = uniqueArray.filter(e => e !== name);
+        // removeStoreItem.push(name);
+
+        console.log(uniqueArray)
         // Set the list
-        setMyFacourite(myFavourite);
         setButtonView(false);
-        localStorage.setItem('MyFarArray', myFavourite);
+        localStorage.setItem('MyFarArray', uniqueArray);
+       
     };
 
     const removeFromProfileHandler = () => {
         const localStorageExistingValues = localStorage.getItem("MyFarArray").split(",");
         const removeStoreItem = localStorageExistingValues.filter(e => e !== name);
-        localStorage.setItem('MyFarArray', removeStoreItem);
+        console.log(removeStoreItem);
         setMyFacourite(removeStoreItem);
+        localStorage.setItem('MyFarArray', removeStoreItem);
         setRemoveCard(false);
     };
 
