@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react';
-import PropTypes from 'prop-types';
 import styled from "styled-components";
+import Pokeball from "../assets/pokeball.png";
 
 // Components
 import Button from "./Buttons";
@@ -8,6 +8,8 @@ import Button from "./Buttons";
 
 // Context
 import {ListContext} from "../config/store";
+
+// Styles
 
 const CardWrapper = styled.div`
     padding: 20px 0px;
@@ -81,6 +83,8 @@ const ImageContainer = styled.div`
    }
 `;
 
+// Components
+
 function Card(props) {
     const {name, image, speed, spDefence, spAttack, defense, attack, hp, type1, type2, height, weight, remove } = props;
 
@@ -92,10 +96,6 @@ function Card(props) {
         // Add the pokemon to localStorage list
         myFavourite.push(name)
         const uniqueArray =  [...new Set(myFavourite)]
-        // const removeStoreItem = uniqueArray.filter(e => e !== name);
-        // removeStoreItem.push(name);
-
-        console.log(uniqueArray)
         // Set the list
         setButtonView(false);
         localStorage.setItem('MyFarArray', uniqueArray);
@@ -105,7 +105,6 @@ function Card(props) {
     const removeFromProfileHandler = () => {
         const localStorageExistingValues = localStorage.getItem("MyFarArray").split(",");
         const removeStoreItem = localStorageExistingValues.filter(e => e !== name);
-        console.log(removeStoreItem);
         setMyFacourite(removeStoreItem);
         localStorage.setItem('MyFarArray', removeStoreItem);
         setRemoveCard(false);
@@ -128,7 +127,7 @@ function Card(props) {
                 <h3>{type2}</h3>
             </PokemonTypes>
             <ImageContainer>
-                <img src={image} alt={image}/>
+                <img src={!image? Pokeball : image} alt={image}/>
             </ImageContainer>
             <ul>
                 <li><h4>{speed}</h4></li>
@@ -145,24 +144,9 @@ function Card(props) {
     )
 }
 
-Card.propTypes = {
-    name: PropTypes.string.isRequired,
-    image: PropTypes.string.isRequired,
-    speed: PropTypes.array.isRequired,
-    spDefence: PropTypes.array.isRequired,
-    spAttack: PropTypes.array.isRequired,
-    defense: PropTypes.array.isRequired,
-    attack: PropTypes.array.isRequired,
-    hp: PropTypes.array.isRequired,
-    type1: PropTypes.string.isRequired,
-    type2: PropTypes.string.isRequired,
-    height:PropTypes.number.isRequired, 
-    weight:PropTypes.number.isRequired
-}
 
 Card.defaultProps = {
     name: 'Name',
-    image: "www.https://via.placeholder.com/150x150",
     speed: "Speed:40",
     spDefence: "Special Defence:40",
     spAttack: "Special Attack:40",

@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from "styled-components";
 import { useForm } from 'react-hook-form';
 
@@ -6,11 +6,12 @@ import { useForm } from 'react-hook-form';
 // Components
 import Card from "../Components/Card";
 import Button from "../Components/Buttons";
-
-// Context
-import {ListContext} from "../config/store";
+import SmallerCard from "../Components/SmallerCard";
 
 const axios = require('axios');
+
+
+// Styles
 
 const SearchWrap = styled.div`
     padding:20px 15px;
@@ -78,6 +79,28 @@ const ErrorsWrap = styled.div`
     }
 `;
 
+const SuggestionWrap = styled.div`
+    display:grid;
+    padding:20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+    grid-gap:15px;
+    text-align:center;
+    h1{
+        font-size:25px;
+        color:${({ theme }) => theme.colors.secondaryBlue};
+        font-weight:bold;
+        margin-bottom:10px;
+    }
+`;
+
+const SmallCardWrap = styled.div`
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+    grid-gap:5px;
+
+`;
+
+// Component
  function Home(props) {
      // Refs
      const { register, handleSubmit, errors } = useForm();
@@ -89,7 +112,51 @@ const ErrorsWrap = styled.div`
      let [pokemon, setPokemonData] = useState([]);
      let [searchResult, setSearchResult] = useState([]);
      let [errorMessage, setMessageValue] = useState(false);
-     let [myFavourite, setMyFacourite] = useContext(ListContext);
+
+     const [pokemonOneValue, setPokemonOneValue] = useState("");
+     const [pokemonValueOne, setPokemonValueOne] = useState([]);
+
+     // Hanldes click and assign value
+     const assignValue = (e) => {
+        setPokemonValueOne([]);
+        setPokemonOneValue(e.target.innerText);
+    };
+
+    // Handle Value changes on Inputs
+    const handleChange = e => {
+        setPokemonOneValue(e.target.value);
+    };
+
+    const suggestionsHandlerOne = e => {
+
+        const value = e.target.value;
+
+        if(value === "" || value.length < 0 ) {
+            setPokemonValueOne([]);
+            setPokemonOneValue("");
+        }else{
+            (async () => {
+                const namesArray = [];
+                const grabData = await axios.get(`https://pokeapi.co/api/v2/pokemon/?limit=200`);
+                grabData.data.results.map(i => {
+                    return namesArray.push(i.name);
+                });
+                const search = namesArray.filter(i => i.includes(value));
+                setPokemonValueOne([search]);
+            })();
+        }
+    };
+
+    let values;
+    // Assigns Unique values to array for Suggestions
+    if(pokemonValueOne.length > 0){
+        let count = 0;
+        values = pokemonValueOne.map(i => {
+            return i.map(pokemon => {
+                return (<SmallerCard name={pokemon} onClick={assignValue} key={count += 1} />)
+            });
+        });
+    }
 
      //Let new limit based on action
      const changeLimit = () => {
@@ -99,6 +166,7 @@ const ErrorsWrap = styled.div`
      // Search for pokemon
      const onSubmit = async data => {
         try{
+            setPokemonValueOne([]);
             const searchTerm = data.searchPokemon.toLowerCase();
             const grabData = await axios.get(`https://pokeapi.co/api/v2/pokemon/${searchTerm}`);
             const singlePokemonData = [ grabData.data.species.name, grabData.data.sprites.front_default, grabData.data.types.map(i => i.type.name), grabData.data.stats.map(i => [i.stat.name + ": ", i.base_stat,]),grabData.data.height, grabData.data.weight];
@@ -132,20 +200,6 @@ const ErrorsWrap = styled.div`
                 // Store Pokemons
                 setPokemonData(resolvedPokemonBrowse);
 
-                // if(localStorage.getItem('MyFarArray')){
-                //     const storedFavPokemons = localStorage.getItem('MyFarArray');
-                //     const uniqueFavArray = [...new Set(storedFavPokemons.split(","))];
-                //     console.log(uniqueFavArray);
-                //     let pokemonBrowse = await uniqueFavArray.map(async i => {
-                //             return await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`).then(res => {
-                //                  const pokemonData = [ res.data.species.name, res.data.sprites.front_default, res.data.types.map(i => i.type.name), res.data.stats.map(i => [i.stat.name + ": ", i.base_stat,]), res.data.height, res.data.weight];
-                //                  return pokemonData;
-                //               });
-                //          });
-                //     const resolvedPokemonBrowse = await Promise.all(pokemonBrowse);
-                //     setMyFacourite(resolvedPokemonBrowse);
-                // }
-    
             }catch (e) {
                 console.log(e);
             }
@@ -168,10 +222,16 @@ const ErrorsWrap = styled.div`
             {errorMessage && (<ErrorsWrap> <h2>No Results Found</h2> </ErrorsWrap>)}
             {errors.searchPokemon && (<ErrorsWrap> <h1> {errors.searchPokemon.message}</h1> </ErrorsWrap>)}
             <SearchWrap>
-                <SearchInput type="text" name="searchPokemon" ref={register({required: "Please Enter a Pokemon name"})}/>
+                <SearchInput type="text" value={pokemonOneValue} onChange={handleChange} onKeyUp={suggestionsHandlerOne} name="searchPokemon" ref={register({required: "Please Enter a Pokemon name"})}/>
                 <Button text="Search Pokemon"/>
                 {searchResult.length > 0 ? (<Card key={searchResult[0]} name={searchResult[0]} image={searchResult[1]} speed={searchResult[3][0]} spDefence={searchResult[3][1]} spAttack={searchResult[3][2]} defense={searchResult[3][3]} attack={searchResult[3][4]} hp={searchResult[3][5]} type1={searchResult[2][0]} type2={searchResult[2][1]} height={searchResult[4]} weight={searchResult[5]} />) : ""}
             </SearchWrap>
+            <SuggestionWrap>
+            <div>
+                <h1>Pokemon One Search</h1>
+                <SmallCardWrap> {values} </SmallCardWrap>
+            </div>
+            </SuggestionWrap>
             </form>
             <CardWrap>
                 {pokemon.length > 0 ? (pokemons) : ""}

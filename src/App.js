@@ -7,20 +7,20 @@ import Error from "./Views/Error";
 import Compare from "./Views/Compare";
 import Profile from "./Views/Profile";
 
-// Components 
+// Components imported 
 import Header from "./Components/Header";
 import Devider from "./Components/Devider";
 
 // Styles 
 import theme from "./styles/theme.js";
+import GlobalStyles from "./styles/GlobalStyles";
 
 // Config
 import Store from "./config/store";
 
-import {
-  Switch,
-  Route
-} from "react-router-dom";
+import { Switch, Route} from "react-router-dom";
+
+// Components
 
 function IncludeHeader(props) {
 
@@ -37,6 +37,7 @@ function App() {
     <Store> 
       <div className="App">
         <ThemeProvider theme={theme}>
+        <GlobalStyles />
       <Switch> 
         <Route exact path="/" component={() => <IncludeHeader children={<Home/>}/> }/>
         <Route exact path="/compare" component={() => <IncludeHeader children={<Compare/>}/> }/>

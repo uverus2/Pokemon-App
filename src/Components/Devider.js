@@ -2,6 +2,8 @@ import React from 'react';
 import devider from "../assets/Vector.svg";
 import styled from "styled-components";
 
+// Styles
+
 const DeviderWrap = styled.div`
     width:100%;
     padding:20px 0px;
@@ -9,6 +11,8 @@ const DeviderWrap = styled.div`
         width:100%;
     }
 `;
+
+// Component
 
 function Devider() {
     return (

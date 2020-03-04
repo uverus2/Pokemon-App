@@ -1,3 +1,35 @@
+# Pokemon App 
+
+- To browse and search for pokemon go to Home tab or http://localhost:3000
+    - You can browse Pokémon’s
+    - Search for a specific Pokémon 
+    - Add to favourites 
+- To compare pokemons go to Compare tab or http://localhost:3000/compare 
+    - Search a Pokémon 
+    - Add to favourite
+- To view your favourite pokemons go to Favourite tab or http://localhost:3000/profile
+    - Remove Pokémon’s
+
+## Tech Specification
+The technologies used for the project are React JS and CSS 
+
+Dependencies 
+    - Create React App
+    - Styled Components
+    - React Hook Form
+    - Axios
+    - Reset CSS
+
+API used is the PokeAPI
+    - https://pokeapi.co/api/v2/pokemon/
+
+Additional information 
+    - Search suggestions are limited to 200 results
+    - Favourite Pokémon’s are stored in Local Storage
+
+
+To run the project please follow instructions below provided by Create React App
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

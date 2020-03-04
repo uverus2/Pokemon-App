@@ -4,39 +4,33 @@ import styled from "styled-components";
 
 // Styles
 
-const Button = styled.button`
+const CardWrap = styled.div`
     padding:15px;
-    width:100%;
     color: ${({ theme }) => theme.colors.secondaryBlue};
     background: ${({ theme }) => theme.colors.mainYellow};
     border: 2px solid ${({ theme }) => theme.colors.secondaryBlue};
-    font-weight:bold;
-    border-radius:25px;
+
     :hover{
         background: ${({ theme }) => theme.colors.secondaryBlue};
         color:${({ theme }) => theme.colors.mainYellow};
-    }
-    :focus{
-        outline:none;
     }
 `;
 
 // Component
 
-function Buttons(props) {
-    const {text, onClick} = props;
+function SmallerCard(props) {
+    const {onClick, name} = props;
     return (
-        <Button onClick={onClick}> {text} </Button>
+        <CardWrap onClick={onClick}>
+            <h4>{name}</h4>
+        </CardWrap>
     )
 }
 
-Buttons.propTypes = {
-    text: PropTypes.string.isRequired
+SmallerCard.propTypes = {
+    name: PropTypes.string.isRequired
 }
 
-Buttons.defaultProps = {
-    text: 'Click Me'
-  };
+export default SmallerCard;
 
-export default Buttons
 

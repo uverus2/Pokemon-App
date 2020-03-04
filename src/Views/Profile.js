@@ -14,6 +14,8 @@ import {ListContext} from "../config/store";
 
 const axios = require('axios');
 
+// Styles
+
 const CardWrap = styled.div`
     display:grid;
     padding:0px 20px;
@@ -42,10 +44,17 @@ const NoResults = styled.div`
     }
 `;
 
+const ProfileWrap = styled.div`
+    padding-bottom:25px;
+`;
+
+
+// Component
+
 function Profile () {
     const [showEmptyMessage, setEmptyMessage] = useState(true);
     const [favPokemon, setfavPokemon] = useState([]);
-    let [myFavourite, setMyFacourite] = useContext(ListContext);
+    let [myFavourite] = useContext(ListContext);
     useEffect(() => {
         (async() => {
             if(myFavourite.length > 0){
@@ -58,23 +67,10 @@ function Profile () {
                           });
                      });
                 const resolvedPokemonBrowse = await Promise.all(pokemonBrowse);
-                //setfavPokemon(resolvedPokemonBrowse);
                 setfavPokemon(resolvedPokemonBrowse);
-                // console.log(favPokemon);
             }
         })();
     },[myFavourite]);
-
-    // useEffect(()=> {
-    //     console.log(myFavourite)
-    //     if(myFavourite.length > 0){
-    //         setEmptyMessage(false);
-    //     }else if (myFavourite.length < 0){
-    //         setEmptyMessage(true);
-    //     }
-    //     console.log(myFavourite);
-    // },[myFavourite]);
-    
 
     let favPokemons;
     // If pokemon are present
@@ -87,17 +83,19 @@ function Profile () {
     };
 
     return(
-        <div>
-            <NoResults> {showEmptyMessage && (<h1> You do not have pokemons added to your list </h1>)} </NoResults>
+        <ProfileWrap>
+             {showEmptyMessage && (<NoResults> <h1> You do not have pokemons added to your list </h1> </NoResults>)} 
             <CardWrap> {favPokemons} </CardWrap>
-            <NoResults> {!showEmptyMessage && myFavourite.length <= 0 && (
-                <div>
-                    <h1>You have removed all of your favourites </h1>
-                    <Link to="/"> <Button text="Add More"/> </Link>
-                    <img src={cyndaquil} alt="Add More" />
-                </div>
-            )} </NoResults>
-        </div>
+             {!showEmptyMessage && myFavourite.length <= 0 && (
+                <NoResults>
+                    <div>
+                        <h1>You have removed all of your favourites </h1>
+                        <Link to="/"> <Button text="Add More"/> </Link>
+                        <img src={cyndaquil} alt="Add More" />
+                    </div>
+                </NoResults>
+            )} 
+        </ProfileWrap>
     )
 };
 
