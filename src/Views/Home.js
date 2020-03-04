@@ -215,10 +215,16 @@ const SmallCardWrap = styled.div`
             );
         });
     };
-    
+
     return (
         <React.Fragment>
-            <form onSubmit={handleSubmit(onSubmit)}> 
+            <SuggestionWrap>
+                <div>
+                    {typeof values !== "undefined" && (<h1>Suggestions</h1>)}
+                    <SmallCardWrap> {values} </SmallCardWrap>
+                </div>
+            </SuggestionWrap>
+            <form autoComplete = "off" onSubmit={handleSubmit(onSubmit)}> 
             {errorMessage && (<ErrorsWrap> <h2>No Results Found</h2> </ErrorsWrap>)}
             {errors.searchPokemon && (<ErrorsWrap> <h1> {errors.searchPokemon.message}</h1> </ErrorsWrap>)}
             <SearchWrap>
@@ -226,12 +232,6 @@ const SmallCardWrap = styled.div`
                 <Button text="Search Pokemon"/>
                 {searchResult.length > 0 ? (<Card key={searchResult[0]} name={searchResult[0]} image={searchResult[1]} speed={searchResult[3][0]} spDefence={searchResult[3][1]} spAttack={searchResult[3][2]} defense={searchResult[3][3]} attack={searchResult[3][4]} hp={searchResult[3][5]} type1={searchResult[2][0]} type2={searchResult[2][1]} height={searchResult[4]} weight={searchResult[5]} />) : ""}
             </SearchWrap>
-            <SuggestionWrap>
-            <div>
-                <h1>Pokemon One Search</h1>
-                <SmallCardWrap> {values} </SmallCardWrap>
-            </div>
-            </SuggestionWrap>
             </form>
             <CardWrap>
                 {pokemon.length > 0 ? (pokemons) : ""}

@@ -115,6 +115,8 @@ function Compare() {
     const [pokemonOneValue, setPokemonOneValue] = useState("");
     const [pokemonTwoValue, setPokemonTwoValue] = useState("");
 
+    const [pokemonNoResults, setPokemonOneNoResults] = useState(false);
+
 
     const returnValue = (data) => {
         return [data.data.species.name, data.data.sprites.front_default, data.data.types.map(i => i.type.name), data.data.stats.map(i => [i.stat.name + ": ", i.base_stat, ]), data.data.height, data.data.weight]
@@ -183,9 +185,6 @@ function Compare() {
         }
     };
 
-
-
-
     // generating comparison
     const onSubmit = async data => {
         try {
@@ -193,14 +192,20 @@ function Compare() {
             setPokemonTwoData([]);
             const pokemonOneData = await axios.get(`https://pokeapi.co/api/v2/pokemon/${data.pokemonOne.toLowerCase()}`);
             const pokemonTwoData = await axios.get(`https://pokeapi.co/api/v2/pokemon/${data.pokemonTwo.toLowerCase()}`);
+            
             const pokemonOne = returnValue(pokemonOneData);
             const pokemonTwo = returnValue(pokemonTwoData);
 
-            setPokemonOneData(pokemonOne);
             setPokemonTwoData(pokemonTwo);
-
+            setPokemonOneData(pokemonOne);
         } catch (e) {
-            console.log(e)
+            console.log(e);
+            setPokemonOneData([]);
+            setPokemonTwoData([]);
+            setPokemonValueOne([]);
+            setPokemonValueTwo([]);
+            setPokemonOneNoResults(true);
+        
         }
     };
 
@@ -211,12 +216,7 @@ function Compare() {
     const assignToValues = (state, number, countValue, increment) => {
             return state.map(i => {
                     return i.map(pokemon => {
-                            return ( < SmallerCard name = { pokemon }
-                                onClick = {
-                                    (e) => assignValue(e, number) }
-                                key = { countValue += increment }
-                                />)
-                            });
+                        return ( < SmallerCard name ={pokemon} onClick = { (e) => assignValue(e, number) } key = { countValue += increment }/>)});
                     });
             }
             if (pokemonValueOne.length > 0) {
@@ -229,94 +229,43 @@ function Compare() {
                 values2 = assignToValues(pokemonValueTwo, 2, count, 100);
             }
 
-            return ( <
-                    React.Fragment >
-                    <
-                    form autoComplete = "off"
-                    onSubmit = { handleSubmit(onSubmit) } >
-                    <
-                    CompareWrap >
-                    <
-                    ErrorsWrap >
-                    <
-                    h2 > { errors.pokemonOne && errors.pokemonOne.message } < /h2> <
-                    h2 > { errors.pokemonTwo && errors.pokemonTwo.message } < /h2> <
-                    /ErrorsWrap> <
-                    SuggestionWrap >
-                    <
-                    div >
-                    <
-                    h1 > Pokemon One Search < /h1> <
-                    SmallCardWrap > { values } < /SmallCardWrap> <
-                    /div> <
-                    div >
-                    <
-                    h1 > Pokemon Two Search < /h1> <
-                    SmallCardWrap > { values2 } < /SmallCardWrap> <
-                    /div> <
-                    /SuggestionWrap> <
-                    CompareInputsWrap >
-                    <
-                    CompareInput type = "text"
-                    value = { pokemonOneValue }
-                    name = "pokemonOne"
-                    onChange = { handleChange }
-                    onKeyUp = { suggestionsHandlerOne }
-                    ref = { register({ required: "Please Enter a Pokemon One value" }) }
-                    /> <
-                    h1 > VS < /h1> <
-                    CompareInput type = "text"
-                    value = { pokemonTwoValue }
-                    onKeyUp = { suggestionsHandlerTwo }
-                    onChange = { handleChange }
-                    name = "pokemonTwo"
-                    ref = { register({ required: "Please Enter a Pokemon Two value" }) }
-                    /> <
-                    /CompareInputsWrap> <
-                    ButtonWrap >
-                    <
-                    Button text = "Compare Pokemon" / >
-                    <
-                    /ButtonWrap> <
-                    /CompareWrap> <
-                    /form> <
-                    ResultsContainer > {
-                        pokemonOne.length > 0 ? ( <
-                            Card key = { pokemonOne[0] }
-                            name = { pokemonOne[0] }
-                            image = { pokemonOne[1] }
-                            speed = { pokemonOne[3][0] }
-                            spDefence = { pokemonOne[3][1] }
-                            spAttack = { pokemonOne[3][2] }
-                            defense = { pokemonOne[3][3] }
-                            attack = { pokemonOne[3][4] }
-                            hp = { pokemonOne[3][5] }
-                            type1 = { pokemonOne[2][0] }
-                            type2 = { pokemonOne[2][1] }
-                            height = { pokemonOne[4] }
-                            weight = { pokemonOne[5] }
-                            />) : ""}
-
-                            {
-                                pokemonTwo.length > 0 ? ( <
-                                    Card key = { pokemonTwo[0] }
-                                    name = { pokemonTwo[0] }
-                                    image = { pokemonTwo[1] }
-                                    speed = { pokemonTwo[3][0] }
-                                    spDefence = { pokemonTwo[3][1] }
-                                    spAttack = { pokemonTwo[3][2] }
-                                    defense = { pokemonTwo[3][3] }
-                                    attack = { pokemonTwo[3][4] }
-                                    hp = { pokemonTwo[3][5] }
-                                    type1 = { pokemonTwo[2][0] }
-                                    type2 = { pokemonTwo[2][1] }
-                                    height = { pokemonTwo[4] }
-                                    weight = { pokemonTwo[5] }
-                                    />) : ""} <
-                                    /ResultsContainer> <
-                                    /React.Fragment>
-                                )
-                            }
+            return ( <React.Fragment >
+                        <form autoComplete = "off" onSubmit = { handleSubmit(onSubmit) }>
+                            <CompareWrap>
+                                <ErrorsWrap>
+                                    {pokemonNoResults && <h2> No Results Found for one of your Pokemons or an error has occured </h2> }
+                                    <h2> { errors.pokemonOne && errors.pokemonOne.message } </h2> 
+                                    <h2> { errors.pokemonTwo && errors.pokemonTwo.message } </h2> 
+                                </ErrorsWrap> 
+                                <SuggestionWrap>
+                                    <div>
+                                        <h1> Pokemon One Search </h1> 
+                                        <SmallCardWrap > { values } </SmallCardWrap>
+                                    </div> 
+                                    <div>
+                                        <h1> Pokemon Two Search </h1> 
+                                        <SmallCardWrap > { values2 } </SmallCardWrap> 
+                                    </div> 
+                                </SuggestionWrap> 
+                                <CompareInputsWrap>
+                                    <CompareInput type ="text" value = { pokemonOneValue } name = "pokemonOne" onChange = { handleChange } onKeyUp = { suggestionsHandlerOne } ref = { register({ required: "Please Enter a Pokemon One value" }) }/> 
+                                    <h1> VS </h1> 
+                                    <CompareInput type = "text" value = { pokemonTwoValue } onKeyUp = { suggestionsHandlerTwo } onChange = { handleChange } name = "pokemonTwo" ref = { register({ required: "Please Enter a Pokemon Two value" }) }/> 
+                                </CompareInputsWrap> 
+                                <ButtonWrap>
+                                <Button text = "Compare Pokemon"/>
+                                </ButtonWrap> 
+                            </CompareWrap> 
+                        </form> 
+                        <ResultsContainer> 
+                            {pokemonOne.length > 0 ? 
+                                ( <Card key ={pokemonOne[0] + 1} name = { pokemonOne[0] } image = { pokemonOne[1] } speed = { pokemonOne[3][0] } spDefence = { pokemonOne[3][1] } spAttack = { pokemonOne[3][2] } defense = { pokemonOne[3][3] } attack = { pokemonOne[3][4] } hp = { pokemonOne[3][5]} type1 = { pokemonOne[2][0] } type2 = { pokemonOne[2][1] } height = { pokemonOne[4] } weight = { pokemonOne[5] }/>) 
+                                : ""}
+                            {pokemonTwo.length > 0 ? 
+                                ( <Card key = { pokemonTwo[0] + 2 } name = { pokemonTwo[0] } image = { pokemonTwo[1] } speed = { pokemonTwo[3][0] } spDefence = { pokemonTwo[3][1] } spAttack = { pokemonTwo[3][2] } defense = { pokemonTwo[3][3] } attack = { pokemonTwo[3][4] } hp = { pokemonTwo[3][5] } type1 = { pokemonTwo[2][0] } type2 = { pokemonTwo[2][1] } height = { pokemonTwo[4] } weight = { pokemonTwo[5] } />) 
+                                : ""} 
+                        </ResultsContainer> 
+                    </React.Fragment> )}
 
 
                             export default Compare
